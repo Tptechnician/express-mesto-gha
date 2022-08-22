@@ -5,14 +5,6 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.get('/', (req, res) => {
-  res.send('Проверка еще раз');
-});
-
-app.post('/', express.json(), (req, res) => {
-  res.send(req.body);
-});
-
 async function main() {
   await mongoose.connect('mongodb://localhost:27017/mestodb', {
     useNewUrlParser: true,
@@ -25,3 +17,13 @@ async function main() {
 }
 
 main();
+/*
+app.use((req, res, next) => {
+  req.user = {
+    _id: '630264734d9407089bc3ceb6',
+  };
+
+  next();
+});
+*/
+app.use('/', require('./routes/users'));
