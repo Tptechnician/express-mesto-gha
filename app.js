@@ -17,7 +17,7 @@ async function main() {
 }
 
 main();
-/*
+
 app.use((req, res, next) => {
   req.user = {
     _id: '630264734d9407089bc3ceb6',
@@ -25,5 +25,7 @@ app.use((req, res, next) => {
 
   next();
 });
-*/
+
+app.use('/', require('./routes/cards'));
+
 app.use('/', require('./routes/users'));
