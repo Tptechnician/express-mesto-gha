@@ -16,7 +16,13 @@ module.exports.getUserId = (req, res) => {
       }
       res.send(user);
     })
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: `Передан некорректный id: ${err}` });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+    });
 };
 
 module.exports.createUser = (req, res) => {
