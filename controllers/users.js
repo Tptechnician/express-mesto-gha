@@ -9,7 +9,13 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUserId = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: 'Пользователя с таким id нет' });
+        return;
+      }
+      res.send(user);
+    })
     .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
 };
 
