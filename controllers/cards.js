@@ -30,7 +30,13 @@ module.exports.createCards = (req, res) => {
 module.exports.likeCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((updatedCard) => res.send(updatedCard))
+    .then((updatedCard) => {
+      if (!updatedCard) {
+        res.status(400).send({ message: 'Карточки с таким id нет' });
+        return;
+      }
+      res.send(updatedCard);
+    })
     .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
 };
 
