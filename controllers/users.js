@@ -43,7 +43,13 @@ module.exports.updateUser = (req, res) => {
   const id = req.user._id;
   User.findByIdAndUpdate(id, { name, about }, { new: true })
     .then((updatedUser) => res.send(updatedUser))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: `Некорректные данные пользователя: ${err}` });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+    });
 };
 
 module.exports.updateAvatar = (req, res) => {
