@@ -18,7 +18,13 @@ module.exports.createCards = (req, res) => {
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: `Некорректные данные карточки: ${err}` });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+    });
 };
 
 module.exports.likeCard = (req, res) => {
