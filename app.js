@@ -29,3 +29,5 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/cards'));
 
 app.use('/', require('./routes/users'));
+
+app.use('*', require('./routes/notFountPath'));
