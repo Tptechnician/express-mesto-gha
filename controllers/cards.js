@@ -49,6 +49,18 @@ module.exports.likeCard = (req, res) => {
 module.exports.dislikeCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((updatedCard) => res.send(updatedCard))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+    .then((updatedCard) => {
+      if (!updatedCard) {
+        res.status(404).send({ message: 'Карточки с таким id нет' });
+        return;
+      }
+      res.send(updatedCard);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: `Передан некорректный id: ${err}` });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+    });
 };
