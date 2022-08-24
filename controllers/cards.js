@@ -9,8 +9,20 @@ module.exports.getCards = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
-    .then((card) => res.send(card))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Карточки с таким id нет' });
+        return;
+      }
+      res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: `Передан некорректный id: ${err}` });
+        return;
+      }
+      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+    });
 };
 
 module.exports.createCards = (req, res) => {
