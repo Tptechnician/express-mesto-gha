@@ -32,7 +32,7 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((updatedCard) => {
       if (!updatedCard) {
-        res.status(400).send({ message: 'Карточки с таким id нет' });
+        res.status(404).send({ message: 'Карточки с таким id нет' });
         return;
       }
       res.send(updatedCard);
