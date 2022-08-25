@@ -11,7 +11,7 @@ const {
 
 cardsRouter.get('/cards', getCards);
 
-cardsRouter.post('/cards', express.json(), createCards);
+cardsRouter.post('/cards', createCards);
 
 cardsRouter.delete('/cards/:cardId', deleteCard);
 

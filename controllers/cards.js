@@ -1,9 +1,10 @@
 const Card = require('../models/card');
+const { errorServer, errorBadReq, reqNotFound } = require('../errors/errorCodes');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка: ${err}` }));
+    .catch(() => res.status(errorServer).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -11,17 +12,17 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Карточки с таким id нет' });
+        res.status(reqNotFound).send({ message: 'Карточки с таким id нет' });
         return;
       }
       res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: `Передан некорректный id: ${err}` });
+        res.status(errorBadReq).send({ message: 'Передан некорректный id' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+      res.status(errorServer).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -32,10 +33,10 @@ module.exports.createCards = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: `Некорректные данные карточки: ${err}` });
+        res.status(errorBadReq).send({ message: 'Некорректные данные карточки' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+      res.status(errorServer).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -44,17 +45,17 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((updatedCard) => {
       if (!updatedCard) {
-        res.status(404).send({ message: 'Карточки с таким id нет' });
+        res.status(reqNotFound).send({ message: 'Карточки с таким id нет' });
         return;
       }
       res.send(updatedCard);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: `Передан некорректный id: ${err}` });
+        res.status(errorBadReq).send({ message: 'Передан некорректный id' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+      res.status(errorServer).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -70,9 +71,9 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: `Передан некорректный id: ${err}` });
+        res.status(errorBadReq).send({ message: 'Передан некорректный id' });
         return;
       }
-      res.status(500).send({ message: `Произошла ошибка: ${err}` });
+      res.status(errorServer).send({ message: 'На сервере произошла ошибка' });
     });
 };

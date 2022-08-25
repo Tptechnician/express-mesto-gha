@@ -18,6 +18,8 @@ async function main() {
 
 main();
 
+app.use(express.json());
+
 app.use((req, res, next) => {
   req.user = {
     _id: '630264734d9407089bc3ceb6',
