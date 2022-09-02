@@ -13,8 +13,11 @@
   "author": "Pavel Demin",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.18.1",
-    "mongoose": "^6.5.2"
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.5.2",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "eslint": "^8.22.0",

@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+// const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { errorServer, errorBadReq, reqNotFound } = require('../errors/errorCodes');
 
@@ -27,9 +29,22 @@ module.exports.getUserId = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send(user))
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }).then((user) => res.send(user)))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(errorBadReq).send({ message: 'Некорректные данные пользователя' });
@@ -66,3 +81,16 @@ module.exports.updateAvatar = (req, res) => {
       res.status(errorServer).send({ message: 'На сервере произошла ошибка' });
     });
 };
+/*
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
+    .then((updatedUser) => res.send(updatedUser))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(errorBadReq).send({ message: 'Некорректные данные аватара' });
+        return;
+      }
+      res.status(errorServer).send({ message: 'На сервере произошла ошибка' });
+    });
+}; */
