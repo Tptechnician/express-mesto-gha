@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { errorServer, errorBadReq, reqNotFound } = require('../errors/errorCodes');
 
@@ -81,16 +81,26 @@ module.exports.updateAvatar = (req, res) => {
       res.status(errorServer).send({ message: 'На сервере произошла ошибка' });
     });
 };
-/*
+
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
-    .then((updatedUser) => res.send(updatedUser))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(errorBadReq).send({ message: 'Некорректные данные аватара' });
-        return;
-      }
-      res.status(errorServer).send({ message: 'На сервере произошла ошибка' });
-    });
-}; */
+  User.findOne({ email })
+    .select('+password')
+    .orFail(() => new Error('Пользователь не наиден'))
+    .then((user) => {
+      bcrypt.compare(password, user.password)
+        .then((isUserValid) => {
+          if (isUserValid) {
+            const token = jwt.sign({
+              _id: user._id,
+            }, 'JWT_SECRET', { expiresIn: '7d' });
+
+            res.cookie('jwt', token, { httpOnly: true, samSite: true });
+            res.send({ data: user.toJSON() });
+          } else {
+            res.status(401).send({ message: 'Неправильный пароль или email' });
+          }
+        });
+    })
+    .catch((console.error()));
+};
