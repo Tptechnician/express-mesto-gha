@@ -87,8 +87,7 @@ module.exports.updateAvatar = (req, res, next) => {
 };
 
 module.exports.getUser = (req, res, next) => {
-  console.log(req);
-  const id = req.user._id;
+  const id = req.body._id;
 
   User.findById(id)
     .then((user) => {
