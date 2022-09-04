@@ -7,6 +7,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const ErrorBadReq = require('../errors/errorBadReq');
 const ReqNotFound = require('../errors/reqNotFound');
 const EroorExistingUser = require('../errors/errorExistingUser');
+const NotAuthError = require('../errors/notAuthError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -89,8 +90,12 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .select('+password')
-    .orFail(() => new Error('Пользователь не наиден'))
     .then((user) => {
+      console.log(typeof user.email);
+      console.log(typeof email);
+      if (email !== user.email) {
+        throw new NotAuthError('Неправильный пароль или email');
+      }
       bcrypt.compare(password, user.password)
         .then((isUserValid) => {
           if (isUserValid) {
