@@ -87,7 +87,8 @@ module.exports.updateAvatar = (req, res, next) => {
 };
 
 module.exports.getUser = (req, res, next) => {
-  const id = req.body._id;
+  const decoded = jwt.decode(req.cookies.jwt);
+  const id = decoded._id;
 
   User.findById(id)
     .then((user) => {
