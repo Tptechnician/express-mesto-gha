@@ -7,6 +7,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 const { auth } = require('./middlewares/auth');
+const { errorHandler } = require('./errors/errorHandler');
 
 const {
   createUser,
@@ -40,3 +41,5 @@ app.use('/', require('./routes/cards'));
 app.use('/', require('./routes/users'));
 
 app.use('*', require('./routes/notFountPath'));
+
+app.use(errorHandler);
