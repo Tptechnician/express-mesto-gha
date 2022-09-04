@@ -86,14 +86,26 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.getUser = (req, res, next) => {
+  console.log(req);
+  const id = req.user._id;
+
+  User.findById(id)
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      res.send(err);
+    })
+    .catch(next);
+};
+
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .select('+password')
     .then((user) => {
-      console.log(typeof user.email);
-      console.log(typeof email);
-      if (email !== user.email) {
+      if (!user) {
         throw new NotAuthError('Неправильный пароль или email');
       }
       bcrypt.compare(password, user.password)
