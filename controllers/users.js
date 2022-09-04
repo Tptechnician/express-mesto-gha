@@ -6,6 +6,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 const ErrorBadReq = require('../errors/errorBadReq');
 const ReqNotFound = require('../errors/reqNotFound');
+const EroorExistingUser = require('../errors/errorExistingUser');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -50,6 +51,9 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new ErrorBadReq('Некорректные данные пользователя');
+      }
+      if (err.code === 11000) {
+        throw new EroorExistingUser('Пользователь с таким email существует');
       }
     })
     .catch(next);
