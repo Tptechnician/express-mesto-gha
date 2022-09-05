@@ -31,26 +31,6 @@ module.exports.deleteCard = (req, res, next) => {
       }
     })
     .catch(next);
-
-  /*
-  Card.findByIdAndRemove(cardId)
-    .then((card) => {
-      if (!card) {
-        throw new ReqNotFound('Карточки с таким id нет');
-      }
-      if (card.owner.toString() !== id) {
-        throw new ErrorForbiddenAction('Вы не являетесь автором этой карточки');
-      } else {
-        res.send(card);
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new ErrorBadReq('Передан некорректный id');
-      }
-    })
-    .catch(next);
-    */
 };
 
 module.exports.createCards = (req, res, next) => {
