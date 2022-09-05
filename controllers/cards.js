@@ -14,6 +14,25 @@ module.exports.deleteCard = (req, res, next) => {
   const decoded = jwt.decode(req.cookies.jwt);
   const id = decoded._id;
   const { cardId } = req.params;
+
+  Card.findById(cardId)
+    .then((card) => {
+      if (!card) {
+        throw new ReqNotFound('Нет карточки с таким id');
+      }
+      if (card.owner.toString() !== id) {
+        throw new ErrorForbiddenAction('Нет прав для удаления карточки');
+      } else {
+        Card.findByIdAndRemove(cardId)
+          .then((deletedCard) => {
+            res.status(200).send(deletedCard);
+          })
+          .catch(next);
+      }
+    })
+    .catch(next);
+
+  /*
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (!card) {
@@ -31,6 +50,7 @@ module.exports.deleteCard = (req, res, next) => {
       }
     })
     .catch(next);
+    */
 };
 
 module.exports.createCards = (req, res, next) => {
