@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const Card = require('../models/card');
 const ErrorBadReq = require('../errors/errorBadReq');
 const ReqNotFound = require('../errors/reqNotFound');
@@ -10,7 +11,8 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  const id = req.user._id;
+  const decoded = jwt.decode(req.cookies.jwt);
+  const id = decoded._id;
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
     .then((card) => {
