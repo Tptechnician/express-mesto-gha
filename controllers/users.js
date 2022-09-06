@@ -26,7 +26,7 @@ module.exports.getUserId = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new ErrorBadReq('Передан некорректный id');
+        next(new ErrorBadReq('Передан некорректный id'));
       } else {
         next();
       }
@@ -42,23 +42,31 @@ module.exports.createUser = (req, res, next) => {
     password,
   } = req.body;
 
-  bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
-    }).then((user) => res.send(user)))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new ErrorBadReq('Некорректные данные пользователя');
-      }
-      if (err.code === 11000) {
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
         throw new EroorExistingUser('Пользователь с таким email существует');
+      } else {
+        bcrypt.hash(password, 10)
+          .then((hash) => User.create({
+            name,
+            about,
+            avatar,
+            email,
+            password: hash,
+          }).then((newUser) => res.send(newUser)))
+          .catch((err) => {
+            if (err.name === 'ValidationError') {
+              throw new ErrorBadReq('Некорректные данные пользователя');
+            }
+          })
+          .catch(next);
       }
     })
     .catch(next);
+
+  /*
+    */
 };
 
 module.exports.updateUser = (req, res, next) => {
