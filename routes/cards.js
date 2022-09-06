@@ -17,25 +17,25 @@ cardsRouter.post('/cards', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().required()
-      .regex(/^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/),
+      .regex(/^(https?:\/\/)?([\da-z.-]+)([a-z.]{2,6})([/\w.-]*)*\/?$/),
   }),
 }), createCards);
 
 cardsRouter.delete('/cards/:cardId', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().min(24).max(24),
+    cardId: Joi.string().hex().length(24),
   }),
 }), deleteCard);
 
 cardsRouter.put('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().min(24).max(24),
+    cardId: Joi.string().hex().length(24),
   }),
 }), likeCard);
 
 cardsRouter.delete('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().hex().min(24).max(24),
+    cardId: Joi.string().hex().length(24),
   }),
 }), dislikeCard);
 
