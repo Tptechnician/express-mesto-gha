@@ -57,9 +57,9 @@ module.exports.likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new ErrorBadReq('Передан некорректный id');
+        next(new ErrorBadReq('Передан некорректный id'));
       } else {
-        next();
+        next(err);
       }
     });
 };
@@ -76,9 +76,9 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new ErrorBadReq('Передан некорректный id');
+        next(new ErrorBadReq('Передан некорректный id'));
       } else {
-        next();
+        next(err);
       }
     });
 };

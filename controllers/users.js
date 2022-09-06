@@ -28,7 +28,7 @@ module.exports.getUserId = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new ErrorBadReq('Передан некорректный id'));
       } else {
-        next();
+        next(err);
       }
     });
 };
