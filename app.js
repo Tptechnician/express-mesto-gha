@@ -9,6 +9,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 const { auth } = require('./middlewares/auth');
 const { errorHandler } = require('./errors/errorHandler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const {
   createUser,
@@ -34,6 +35,7 @@ main();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -60,6 +62,8 @@ app.use('/', require('./routes/cards'));
 app.use('/', require('./routes/users'));
 
 app.use('*', require('./routes/notFountPath'));
+
+app.use(errorLogger);
 
 app.use(errors());
 
