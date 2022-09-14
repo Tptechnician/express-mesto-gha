@@ -10,11 +10,20 @@ const app = express();
 const { auth } = require('./middlewares/auth');
 const { errorHandler } = require('./errors/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('./middlewares/cors');
 
 const {
   createUser,
   login,
 } = require('./controllers/users');
+
+app.use(cors);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 async function main() {
   try {
